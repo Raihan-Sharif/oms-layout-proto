@@ -7,8 +7,11 @@ import {
   getSortedRowModel,
   flexRender,
 } from '@tanstack/react-table';
+import { useStock } from '../../contexts/StockContext';
 
 const StockPriceTable = () => {
+  const { setSelectedStock } = useStock();
+
   const data = useMemo(() => [
     { symbol: 'AAPL', price: 154.32, change: +2.35, changePercent: +1.55 },
     { symbol: 'MSFT', price: 328.39, change: -1.24, changePercent: -0.38 },
@@ -26,7 +29,17 @@ const StockPriceTable = () => {
     {
       accessorKey: 'symbol',
       header: 'Symbol',
-      cell: info => info.getValue(),
+      cell: info => (
+        <button 
+          onClick={() => {
+            setSelectedStock(info.row.original);
+            console.log('Selected stock:', info.row.original);
+          }}
+          className="hover:text-blue-400 hover:underline"
+        >
+          {info.getValue()}
+        </button>
+      ),
     },
     {
       accessorKey: 'price',
@@ -47,7 +60,7 @@ const StockPriceTable = () => {
         );
       },
     },
-  ], []);
+  ], [setSelectedStock]);
 
   const table = useReactTable({
     data,
@@ -77,7 +90,6 @@ const StockPriceTable = () => {
       </div>
 
       <div className="overflow-x-auto">
-        {/* Fixed height and scrollable table */}
         <div className="overflow-y-auto" style={{ maxHeight: '200px' }}>
           <table className="w-full text-sm">
             <thead className="text-gray-400 border-b border-gray-700">

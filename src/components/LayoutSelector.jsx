@@ -78,7 +78,7 @@ const layouts = [
       { row: 2, col: 0, rowSpan: 1, colSpan: 1 }, // Bottom-left
       { row: 2, col: 2, rowSpan: 1, colSpan: 1 }  // Bottom-right
     ]
-  }
+  },
 ];
 
 const LayoutSelector = ({ setLayout }) => {
