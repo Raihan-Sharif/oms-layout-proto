@@ -12,25 +12,127 @@ import { useStock } from '../../contexts/StockContext';
 const StockPriceTable = () => {
   const { setSelectedStock } = useStock();
 
+  // Updated data with new fields
   const data = useMemo(() => [
-    { symbol: 'AAPL', price: 154.32, change: +2.35, changePercent: +1.55 },
-    { symbol: 'MSFT', price: 328.39, change: -1.24, changePercent: -0.38 },
-    { symbol: 'GOOGL', price: 2752.11, change: +15.32, changePercent: +0.56 },
-    { symbol: 'AMZN', price: 3345.21, change: -23.45, changePercent: -0.70 },
-    { symbol: 'TSLA', price: 1024.86, change: +32.54, changePercent: +3.28 },
-    { symbol: 'NVDA', price: 678.90, change: +12.34, changePercent: +1.85 },
-    { symbol: 'META', price: 345.67, change: -5.43, changePercent: -1.55 },
-    { symbol: 'NFLX', price: 456.78, change: +8.76, changePercent: +1.95 },
-    { symbol: 'AMD', price: 123.45, change: +3.21, changePercent: +2.67 },
-    { symbol: 'INTC', price: 45.67, change: -0.89, changePercent: -1.91 },
+    {
+      symbol: 'AAPL',
+      name: 'Apple Inc.',
+      price: 154.32,
+      change: +2.35,
+      changePercent: +1.55,
+      marketCap: '2.53T',
+      peRatio: 28.76,
+      dividend: '0.88 (0.57%)',
+      volume: '78.4M',
+    },
+    {
+      symbol: 'MSFT',
+      name: 'Microsoft Corporation',
+      price: 328.39,
+      change: -1.24,
+      changePercent: -0.38,
+      marketCap: '2.45T',
+      peRatio: 32.15,
+      dividend: '2.48 (0.75%)',
+      volume: '32.1M',
+    },
+    {
+      symbol: 'GOOGL',
+      name: 'Alphabet Inc.',
+      price: 2752.11,
+      change: +15.32,
+      changePercent: +0.56,
+      marketCap: '1.83T',
+      peRatio: 24.89,
+      dividend: 'N/A',
+      volume: '1.5M',
+    },
+    {
+      symbol: 'AMZN',
+      name: 'Amazon.com Inc.',
+      price: 3345.21,
+      change: -23.45,
+      changePercent: -0.70,
+      marketCap: '1.71T',
+      peRatio: 58.32,
+      dividend: 'N/A',
+      volume: '4.2M',
+    },
+    {
+      symbol: 'TSLA',
+      name: 'Tesla Inc.',
+      price: 1024.86,
+      change: +32.54,
+      changePercent: +3.28,
+      marketCap: '1.03T',
+      peRatio: 112.45,
+      dividend: 'N/A',
+      volume: '25.7M',
+    },
+    {
+      symbol: 'NVDA',
+      name: 'NVIDIA Corporation',
+      price: 678.9,
+      change: +12.34,
+      changePercent: +1.85,
+      marketCap: '425.18B',
+      peRatio: 89.23,
+      dividend: '0.16 (0.02%)',
+      volume: '45.2M',
+    },
+    {
+      symbol: 'META',
+      name: 'Meta Platforms Inc.',
+      price: 345.67,
+      change: -5.43,
+      changePercent: -1.55,
+      marketCap: '584.32B',
+      peRatio: 18.76,
+      dividend: 'N/A',
+      volume: '18.9M',
+    },
+    {
+      symbol: 'NFLX',
+      name: 'Netflix Inc.',
+      price: 456.78,
+      change: +8.76,
+      changePercent: +1.95,
+      marketCap: '202.44B',
+      peRatio: 42.11,
+      dividend: 'N/A',
+      volume: '6.7M',
+    },
+    {
+      symbol: 'AMD',
+      name: 'Advanced Micro Devices Inc.',
+      price: 123.45,
+      change: +3.21,
+      changePercent: +2.67,
+      marketCap: '148.92B',
+      peRatio: 35.67,
+      dividend: 'N/A',
+      volume: '62.3M',
+    },
+    {
+      symbol: 'INTC',
+      name: 'Intel Corporation',
+      price: 45.67,
+      change: -0.89,
+      changePercent: -1.91,
+      marketCap: '189.45B',
+      peRatio: 12.34,
+      dividend: '1.46 (3.20%)',
+      volume: '38.5M',
+    },
   ], []);
 
+  // Updated columns to match the new data structure
   const columns = useMemo(() => [
     {
       accessorKey: 'symbol',
       header: 'Symbol',
       cell: info => (
-        <button 
+        <button
           onClick={() => {
             setSelectedStock(info.row.original);
             console.log('Selected stock:', info.row.original);
@@ -40,6 +142,11 @@ const StockPriceTable = () => {
           {info.getValue()}
         </button>
       ),
+    },
+    {
+      accessorKey: 'name',
+      header: 'Name',
+      cell: info => info.getValue(),
     },
     {
       accessorKey: 'price',
@@ -60,6 +167,26 @@ const StockPriceTable = () => {
         );
       },
     },
+    {
+      accessorKey: 'marketCap',
+      header: 'Market Cap',
+      cell: info => info.getValue(),
+    },
+    {
+      accessorKey: 'peRatio',
+      header: 'P/E Ratio',
+      cell: info => info.getValue(),
+    },
+    {
+      accessorKey: 'dividend',
+      header: 'Dividend',
+      cell: info => info.getValue(),
+    },
+    {
+      accessorKey: 'volume',
+      header: 'Volume',
+      cell: info => info.getValue(),
+    },
   ], [setSelectedStock]);
 
   const table = useReactTable({
@@ -79,7 +206,7 @@ const StockPriceTable = () => {
   return (
     <div className="h-full p-3 bg-gray-800 rounded-lg">
       <h3 className="text-lg font-semibold mb-3 text-blue-400">Stock Prices</h3>
-      
+
       <div className="mb-4">
         <input
           placeholder="Search stocks..."
@@ -90,14 +217,14 @@ const StockPriceTable = () => {
       </div>
 
       <div className="overflow-x-auto">
-        <div className="overflow-y-auto" style={{ maxHeight: '200px' }}>
+        <div className="overflow-y-auto" style={{ maxHeight: '400px' }}>
           <table className="w-full text-sm">
             <thead className="text-gray-400 border-b border-gray-700">
               {table.getHeaderGroups().map(headerGroup => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map(header => (
-                    <th 
-                      key={header.id} 
+                    <th
+                      key={header.id}
                       className="text-left pb-2 px-2"
                       onClick={header.column.getToggleSortingHandler()}
                     >

@@ -1,16 +1,22 @@
 import React from 'react';
+import { useStock } from '../../contexts/StockContext';
 
 const StockDetails = () => {
+
+  const { selectedStock } = useStock();
+
+  console.log('Selected stock in StockDetails:', selectedStock);
+
   const stock = {
-    symbol: 'AAPL',
-    name: 'Apple Inc.',
-    price: 154.32,
-    change: +2.35,
-    changePercent: +1.55,
-    marketCap: '2.53T',
-    peRatio: 28.76,
-    dividend: '0.88 (0.57%)',
-    volume: '78.4M',
+    symbol: selectedStock ? selectedStock.symbol : 'AAPL',
+    name: selectedStock ? selectedStock.name : 'Apple Inc.',
+    price: selectedStock ? selectedStock.price : 154.32,
+    change: selectedStock ? selectedStock.change : +2.35,
+    changePercent: selectedStock ? selectedStock.changePercent : +1.55,
+    marketCap: selectedStock ? selectedStock.marketCap : '2.53T',
+    peRatio: selectedStock ? selectedStock.peRatio : 28.76,
+    dividend: selectedStock ? selectedStock.dividend : '0.88 (0.57%)',
+    volume: selectedStock ? selectedStock.volume : '78.4M'
   };
 
   return (
