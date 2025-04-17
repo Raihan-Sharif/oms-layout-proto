@@ -154,7 +154,7 @@ const Workspace = ({ layout, onReset }) => {
               </span>
               <button
                 onClick={() => removeWidget(index)}
-                className="text-xs bg-red-900 hover:bg-red-800 px-2 py-1 rounded"
+                className="text-xs bg-red-700 hover:bg-red-500 px-2 py-1 rounded"
               >
                 X
               </button>
