@@ -1,15 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChartWidget, StockPriceTable, StockDetails, MarketDepth } from './widgets';
+import React, { useState, useRef, useEffect } from "react";
+import {
+  ChartWidget,
+  StockPriceTable,
+  StockDetails,
+  MarketDepth,
+} from "./widgets";
 
 const widgetComponents = {
-  chart: { component: ChartWidget, name: 'Chart' },
-  table: { component: StockPriceTable, name: 'Stock Table' },
-  details: { component: StockDetails, name: 'Stock Details' },
-  depth: { component: MarketDepth, name: 'Market Depth' },
+  chart: { component: ChartWidget, name: "Chart" },
+  table: { component: StockPriceTable, name: "Stock Table" },
+  details: { component: StockDetails, name: "Stock Details" },
+  depth: { component: MarketDepth, name: "Market Depth" },
 };
 
 const Workspace = ({ layout, onReset }) => {
-  const [widgets, setWidgets] = useState(Array(layout.spans ? layout.spans.length : layout.rows * layout.cols).fill(null));
+  const [widgets, setWidgets] = useState(
+    Array(layout.spans ? layout.spans.length : layout.rows * layout.cols).fill(
+      null
+    )
+  );
   const [draggedWidget, setDraggedWidget] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const [contextMenu, setContextMenu] = useState({
@@ -20,17 +29,20 @@ const Workspace = ({ layout, onReset }) => {
   });
   const contextMenuRef = useRef(null);
 
-  // Context menu logic
+  //#region ctx menu logic
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
+      if (
+        contextMenuRef.current &&
+        !contextMenuRef.current.contains(event.target)
+      ) {
         setContextMenu({ ...contextMenu, show: false });
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [contextMenu]);
 
@@ -44,12 +56,12 @@ const Workspace = ({ layout, onReset }) => {
     });
   };
 
-  // Widget management
+  // #region wdgt mount
   const addWidget = (type) => {
     const newWidgets = [...widgets];
-    newWidgets[contextMenu.cellIndex] = { 
-      id: Date.now(), 
-      type 
+    newWidgets[contextMenu.cellIndex] = {
+      id: Date.now(),
+      type,
     };
     setWidgets(newWidgets);
     setContextMenu({ ...contextMenu, show: false });
@@ -61,7 +73,7 @@ const Workspace = ({ layout, onReset }) => {
     setWidgets(newWidgets);
   };
 
-  // Drag and drop logic
+  // #region DND logic
   const handleDragStart = (index) => {
     if (widgets[index]) {
       setDraggedWidget({ ...widgets[index], sourceIndex: index });
@@ -76,28 +88,29 @@ const Workspace = ({ layout, onReset }) => {
   const handleDrop = (index) => {
     if (draggedWidget && draggedWidget.sourceIndex !== index) {
       const newWidgets = [...widgets];
-      
+
       // Remove from original position
       newWidgets[draggedWidget.sourceIndex] = null;
-      
+
       // If target cell has a widget, swap them
       if (newWidgets[index]) {
         newWidgets[draggedWidget.sourceIndex] = newWidgets[index];
       }
-      
+
       // Place dragged widget in new position
       newWidgets[index] = {
         id: draggedWidget.id,
-        type: draggedWidget.type
+        type: draggedWidget.type,
       };
-      
+
       setWidgets(newWidgets);
     }
-    
+
     setDraggedWidget(null);
     setDragOverIndex(null);
   };
 
+  //#region wdgt rndr logic
   const renderWidget = (widget, index) => {
     const Component = widgetComponents[widget.type].component;
     return (
@@ -111,19 +124,24 @@ const Workspace = ({ layout, onReset }) => {
     );
   };
 
+  //#region cell rndr logic
   const renderGridCell = (index, span = null) => {
     return (
-      <div 
+      <div
         key={index}
         className={`bg-gray-800 rounded-lg p-4 border ${
-          dragOverIndex === index ? 
-            'border-yellow-500 bg-gray-700' : 
-            'border-gray-700'
+          dragOverIndex === index
+            ? "border-yellow-500 bg-gray-700"
+            : "border-gray-700"
         } relative`}
-        style={span ? {
-          gridColumn: `${span.col + 1} / span ${span.colSpan}`,
-          gridRow: `${span.row + 1} / span ${span.rowSpan}`,
-        } : {}}
+        style={
+          span
+            ? {
+                gridColumn: `${span.col + 1} / span ${span.colSpan}`,
+                gridRow: `${span.row + 1} / span ${span.rowSpan}`,
+              }
+            : {}
+        }
         onContextMenu={(e) => showContextMenu(e, index)}
         onDragOver={(e) => handleDragOver(e, index)}
         onDrop={() => handleDrop(index)}
@@ -134,7 +152,7 @@ const Workspace = ({ layout, onReset }) => {
               <span className="text-xs text-gray-400">
                 {widgetComponents[widgets[index].type].name}
               </span>
-              <button 
+              <button
                 onClick={() => removeWidget(index)}
                 className="text-xs bg-red-900 hover:bg-red-800 px-2 py-1 rounded"
               >
@@ -155,27 +173,32 @@ const Workspace = ({ layout, onReset }) => {
     );
   };
 
+  //#region span cell logic
   const renderGrid = () => {
     if (layout.spans) {
       // Render spanned layout
       return (
-        <div className="grid gap-4"
+        <div
+          className="grid gap-4"
           style={{
             gridTemplateColumns: `repeat(${layout.cols}, 1fr)`,
             gridTemplateRows: `repeat(${layout.rows}, minmax(200px, 1fr))`,
-          }}>
+          }}
+        >
           {layout.spans.map((span, index) => renderGridCell(index, span))}
         </div>
       );
     } else {
       // Render regular grid layout
       return (
-        <div className="grid gap-4"
+        <div
+          className="grid gap-4"
           style={{
             gridTemplateColumns: `repeat(${layout.cols}, 1fr)`,
             gridTemplateRows: `repeat(${layout.rows}, minmax(200px, 1fr))`,
-          }}>
-          {Array.from({ length: layout.rows * layout.cols }).map((_, index) => 
+          }}
+        >
+          {Array.from({ length: layout.rows * layout.cols }).map((_, index) =>
             renderGridCell(index)
           )}
         </div>
@@ -186,16 +209,16 @@ const Workspace = ({ layout, onReset }) => {
   return (
     <div className="w-full mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <button 
+        <button
           className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors"
           onClick={onReset}
         >
           ← Back to Layouts
         </button>
         <h2 className="text-xl font-semibold">
-          {layout.id?.includes('span') ? 
-            layout.id.replace(/-/g, ' ') : 
-            `${layout.rows}x${layout.cols} Workspace`}
+          {layout.id?.includes("span")
+            ? layout.id.replace(/-/g, " ")
+            : `${layout.rows}x${layout.cols} Workspace`}
         </h2>
       </div>
 

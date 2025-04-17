@@ -120,7 +120,7 @@ const LayoutSelector = ({ setLayout }) => {
   return (
     <div className="max-w-4xl mx-auto">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-center">Dashboard Builder</h1>
+        <h1 className="text-3xl font-bold text-center">OMS layout prototype</h1>
         <p className="text-center text-gray-400">Select a layout to get started</p>
       </header>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
