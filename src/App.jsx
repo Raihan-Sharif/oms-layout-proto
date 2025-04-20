@@ -8,7 +8,7 @@ const App = () => {
 
   return (
   <StockProvider>
-    <div className="min-h-screen bg-gray-900 text-white p-4">
+    <div className="min-h-screen bg-gray-900 text-white p-0">
       {!layout ? (
         <LayoutSelector setLayout={setLayout} />
       ) : (

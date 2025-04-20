@@ -29,7 +29,7 @@ const Workspace = ({ layout, onReset }) => {
   });
   const contextMenuRef = useRef(null);
 
-  //#region ctx menu logic
+  // Context menu logic
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -56,7 +56,7 @@ const Workspace = ({ layout, onReset }) => {
     });
   };
 
-  // #region wdgt mount
+  // Widget management
   const addWidget = (type) => {
     const newWidgets = [...widgets];
     newWidgets[contextMenu.cellIndex] = {
@@ -64,7 +64,7 @@ const Workspace = ({ layout, onReset }) => {
       type,
     };
     setWidgets(newWidgets);
-    setContextMenu({ ...contextMenu, show: false }); ///[newWidget,null, null,null]
+    setContextMenu({ ...contextMenu, show: false });
   };
 
   const removeWidget = (index) => {
@@ -73,7 +73,7 @@ const Workspace = ({ layout, onReset }) => {
     setWidgets(newWidgets);
   };
 
-  // #region DND logic
+  // Drag and drop logic
   const handleDragStart = (index) => {
     if (widgets[index]) {
       setDraggedWidget({ ...widgets[index], sourceIndex: index });
@@ -88,29 +88,21 @@ const Workspace = ({ layout, onReset }) => {
   const handleDrop = (index) => {
     if (draggedWidget && draggedWidget.sourceIndex !== index) {
       const newWidgets = [...widgets];
-
-      // Remove from original position
       newWidgets[draggedWidget.sourceIndex] = null;
-
-      // If target cell has a widget, swap them
       if (newWidgets[index]) {
         newWidgets[draggedWidget.sourceIndex] = newWidgets[index];
       }
-
-      // Place dragged widget in new position
       newWidgets[index] = {
         id: draggedWidget.id,
         type: draggedWidget.type,
       };
-
       setWidgets(newWidgets);
     }
-
     setDraggedWidget(null);
     setDragOverIndex(null);
   };
 
-  //#region wdgt rndr logic
+  // Render functions
   const renderWidget = (widget, index) => {
     const Component = widgetComponents[widget.type].component;
     return (
@@ -124,16 +116,15 @@ const Workspace = ({ layout, onReset }) => {
     );
   };
 
-  //#region cell rndr logic
   const renderGridCell = (index, span = null) => {
     return (
       <div
         key={index}
-        className={`bg-gray-800 rounded-lg p-4 border ${
+        className={`bg-gray-800 rounded-lg border ${
           dragOverIndex === index
             ? "border-yellow-500 bg-gray-700"
             : "border-gray-700"
-        } relative`}
+        } relative overflow-hidden`}
         style={
           span
             ? {
@@ -148,7 +139,7 @@ const Workspace = ({ layout, onReset }) => {
       >
         {widgets[index] ? (
           <div className="h-full flex flex-col">
-            <div className="flex justify-between border-b border-gray-700 mb-2 pb-2">
+            <div className="flex justify-between border-b border-gray-700 p-2">
               <span className="text-xs text-gray-400">
                 {widgetComponents[widgets[index].type].name}
               </span>
@@ -159,7 +150,9 @@ const Workspace = ({ layout, onReset }) => {
                 X
               </button>
             </div>
-            {renderWidget(widgets[index], index)}
+            <div className="flex-1 overflow-auto">
+              {renderWidget(widgets[index], index)}
+            </div>
           </div>
         ) : (
           <button
@@ -173,29 +166,26 @@ const Workspace = ({ layout, onReset }) => {
     );
   };
 
-  //#region span cell logic
   const renderGrid = () => {
     if (layout.spans) {
-      // Render spanned layout
       return (
         <div
-          className="grid gap-4"
+          className="grid h-full gap-2"
           style={{
             gridTemplateColumns: `repeat(${layout.cols}, 1fr)`,
-            gridTemplateRows: `repeat(${layout.rows}, minmax(200px, 1fr))`,
+            gridTemplateRows: `repeat(${layout.rows}, 1fr)`,
           }}
         >
           {layout.spans.map((span, index) => renderGridCell(index, span))}
         </div>
       );
     } else {
-      // Render regular grid layout
       return (
         <div
-          className="grid gap-4"
+          className="grid h-full gap-2"
           style={{
             gridTemplateColumns: `repeat(${layout.cols}, 1fr)`,
-            gridTemplateRows: `repeat(${layout.rows}, minmax(200px, 1fr))`,
+            gridTemplateRows: `repeat(${layout.rows}, 1fr)`,
           }}
         >
           {Array.from({ length: layout.rows * layout.cols }).map((_, index) =>
@@ -207,8 +197,9 @@ const Workspace = ({ layout, onReset }) => {
   };
 
   return (
-    <div className="w-full mx-auto">
-      <div className="flex justify-between items-center mb-6">
+    <div className="w-full h-screen flex flex-col bg-gray-900">
+      {/* Fixed height header */}
+      <div className="flex justify-between items-center p-4 border-b border-gray-700">
         <button
           className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors"
           onClick={onReset}
@@ -222,7 +213,10 @@ const Workspace = ({ layout, onReset }) => {
         </h2>
       </div>
 
-      {renderGrid()}
+      {/* Main content area */}
+      <div className="flex-1 overflow-hidden p-2">
+        {renderGrid()}
+      </div>
 
       {/* Context Menu */}
       {contextMenu.show && (
