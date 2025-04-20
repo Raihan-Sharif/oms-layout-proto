@@ -100,6 +100,7 @@ const ChartWidget = () => {
         { time: '11:30', open: 520, high: 530, low: 515, close: 525 },
       ];
     }
+    return [];
   }, [selectedStock]);
 
   // Prepare data for Chart.js

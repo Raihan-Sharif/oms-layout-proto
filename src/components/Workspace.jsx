@@ -64,7 +64,7 @@ const Workspace = ({ layout, onReset }) => {
       type,
     };
     setWidgets(newWidgets);
-    setContextMenu({ ...contextMenu, show: false });
+    setContextMenu({ ...contextMenu, show: false }); ///[newWidget,null, null,null]
   };
 
   const removeWidget = (index) => {
