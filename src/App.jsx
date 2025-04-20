@@ -1,22 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LayoutSelector from './components/LayoutSelector';
 import Workspace from './components/Workspace';
+import { getCookie } from './utils/cookieUtils';
 import { StockProvider } from './contexts/StockContext';
 
-const App = () => {
-  const [layout, setLayout] = useState(null);
+function App() {
+  const [currentLayout, setCurrentLayout] = useState(null);
+
+  // Check for saved layout on initial load
+  useEffect(() => {
+    const savedLayout = getCookie('savedLayout');
+    if (savedLayout) {
+    setCurrentLayout(savedLayout.layout);
+    }
+  }, []);
 
   return (
-  <StockProvider>
+    <StockProvider>
     <div className="min-h-screen bg-gray-900 text-white p-0">
-      {!layout ? (
-        <LayoutSelector setLayout={setLayout} />
+      {!currentLayout ? (
+        <LayoutSelector setLayout={setCurrentLayout} />
       ) : (
-        <Workspace layout={layout} onReset={() => setLayout(null)} />
+        <Workspace 
+          layout={currentLayout} 
+          onReset={() => setCurrentLayout(null)} 
+        />
       )}
     </div>
-  </StockProvider>
+    </StockProvider>
   );
-};
+}
 
 export default App;

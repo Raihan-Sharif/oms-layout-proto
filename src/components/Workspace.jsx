@@ -6,6 +6,10 @@ import {
   MarketDepth,
 } from "./widgets";
 
+import { setCookie, getCookie } from "../utils/cookieUtils";
+
+import { FaSave } from "react-icons/fa";
+
 const widgetComponents = {
   chart: { component: ChartWidget, name: "Chart" },
   table: { component: StockPriceTable, name: "Stock Table" },
@@ -28,6 +32,32 @@ const Workspace = ({ layout, onReset }) => {
     cellIndex: null,
   });
   const contextMenuRef = useRef(null);
+
+
+  // Save layout to cookies
+  const saveLayout = () => {
+    const layoutData = {
+      layout,
+      widgets
+    };
+    setCookie('savedLayout', layoutData);
+    alert('Layout saved!');
+  };
+
+  // Load layout from cookies on component mount
+  useEffect(() => {
+    const savedLayout = getCookie('savedLayout');
+    if (savedLayout) {
+      // Validate the saved layout matches our current layout structure
+      if (savedLayout.layout.rows === layout.rows && 
+          savedLayout.layout.cols === layout.cols &&
+          savedLayout.widgets.length === widgets.length) {
+        setWidgets(savedLayout.widgets);
+      }
+    }
+  }, [layout, widgets.length]);
+
+
 
   // Context menu logic
   useEffect(() => {
@@ -200,17 +230,26 @@ const Workspace = ({ layout, onReset }) => {
     <div className="w-full h-screen flex flex-col bg-gray-900">
       {/* Fixed height header */}
       <div className="flex justify-between items-center p-4 border-b border-gray-700">
+     
         <button
           className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors"
           onClick={onReset}
         >
           ← Back to Layouts
         </button>
+        <div className="flex items-center space-x-10">
+        <button
+            className="bg-blue-500 px-1 py-1 rounded hover:bg-blue-600 transition-all duration-100"
+            onClick={saveLayout}
+          >
+           <FaSave className="inline mr-1" size={20} color="lightBlue" />  Save Layout
+          </button>
         <h2 className="text-xl font-semibold">
           {layout.id?.includes("span")
             ? layout.id.replace(/-/g, " ")
             : `${layout.rows}x${layout.cols} Workspace`}
         </h2>
+        </div>
       </div>
 
       {/* Main content area */}
