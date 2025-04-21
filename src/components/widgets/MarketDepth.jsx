@@ -1,8 +1,11 @@
 import React, { useMemo } from 'react';
 import { useStock } from '../../contexts/StockContext';
 
-const MarketDepth = () => {
-  const { selectedStock } = useStock();
+const MarketDepth = ({widgetId}) => {
+  const { widgetStocks, widgetColors } = useStock();
+  const selectedStock = widgetStocks[widgetId]; // get the selected stock for this widget
+
+  console.log(`MarketDepth ID: ${widgetId}, Color: ${widgetColors[widgetId]}`);
 
   // Example bids and asks for demonstration
   const marketData = useMemo(() => {

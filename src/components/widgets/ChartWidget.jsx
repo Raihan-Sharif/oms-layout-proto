@@ -6,8 +6,11 @@ import { useStock } from '../../contexts/StockContext';
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
-const ChartWidget = () => {
-  const { selectedStock } = useStock();
+const ChartWidget = ({widgetId}) => {
+  const { widgetStocks, widgetColors } = useStock();
+  const selectedStock = widgetStocks[widgetId]; // get the selected stock for this widget
+
+  console.log(`ChartWidget ID: ${widgetId}, Color: ${widgetColors[widgetId]}`);
 
   // Mock data for different stocks
   const stockChartData = useMemo(() => {

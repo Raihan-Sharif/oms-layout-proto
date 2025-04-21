@@ -1,11 +1,14 @@
 import React from 'react';
 import { useStock } from '../../contexts/StockContext';
 
-const StockDetails = () => {
+const StockDetails = ({widgetId}) => {
 
-  const { selectedStock } = useStock();
+  const { widgetStocks, widgetColors } = useStock();
+  const selectedStock = widgetStocks[widgetId]; // get the selected stock for this widget
 
-  console.log('Selected stock in StockDetails:', selectedStock);
+  console.log(`StockDetails ID: ${widgetId}, Color: ${widgetColors[widgetId]}`);
+
+  console.log('Selected stock in StockDetails:', selectedStock); 
 
   const stock = {
     symbol: selectedStock ? selectedStock.symbol : 'AAPL',

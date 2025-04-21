@@ -7,8 +7,9 @@ import {
 } from "./widgets";
 
 import { setCookie, getCookie } from "../utils/cookieUtils";
-
 import { FaSave } from "react-icons/fa";
+import ColorSelector from "./ColorSelector";
+import { useStock } from "../contexts/StockContext";
 
 const widgetComponents = {
   chart: { component: ChartWidget, name: "Chart" },
@@ -31,6 +32,7 @@ const Workspace = ({ layout, onReset }) => {
     y: 0,
     cellIndex: null,
   });
+  const [colorId] = useState(null);
   const contextMenuRef = useRef(null);
 
 
@@ -90,7 +92,7 @@ const Workspace = ({ layout, onReset }) => {
   const addWidget = (type) => {
     const newWidgets = [...widgets];
     newWidgets[contextMenu.cellIndex] = {
-      id: Date.now(),
+      id: `${type}-${contextMenu.cellIndex}`,
       type,
     };
     setWidgets(newWidgets);
@@ -141,19 +143,34 @@ const Workspace = ({ layout, onReset }) => {
         onDragStart={() => handleDragStart(index)}
         className="h-full"
       >
-        <Component />
+        <Component widgetId={widget.id} />
       </div>
     );
   };
 
   const renderGridCell = (index, span = null) => {
+    const { updateWidgetColor } = useStock();
+  
+    const handleColorSelect = (colorId) => {
+      const newWidgets = [...widgets];
+      if (newWidgets[index]) {
+        newWidgets[index] = {
+          ...newWidgets[index],
+          colorId, // Assign the selected color's id to the widget
+        };
+        setWidgets(newWidgets);
+        updateWidgetColor(newWidgets[index].id, colorId); // Update color in StockContext
+        console.log(`Widget at index ${index} assigned color ID: ${colorId}`);
+      }
+    };
+  
     return (
       <div
         key={index}
         className={`bg-gray-800 rounded-lg border ${
           dragOverIndex === index
-            ? "border-yellow-500 bg-gray-700"
-            : "border-gray-700"
+            ? 'border-yellow-500 bg-gray-700'
+            : 'border-gray-700'
         } relative overflow-hidden`}
         style={
           span
@@ -173,12 +190,15 @@ const Workspace = ({ layout, onReset }) => {
               <span className="text-xs text-gray-400">
                 {widgetComponents[widgets[index].type].name}
               </span>
-              <button
-                onClick={() => removeWidget(index)}
-                className="text-xs bg-red-700 hover:bg-red-500 px-2 py-1 rounded"
-              >
-                X
-              </button>
+              <div className="flex items-center space-x-2 gap-5">
+                <ColorSelector widgetId={widgets[index].id} /> {/* Pass widgetId */}
+                <button
+                  onClick={() => removeWidget(index)}
+                  className="text-xs bg-red-700 hover:bg-red-500 px-2 py-1 rounded"
+                >
+                  X
+                </button>
+              </div>
             </div>
             <div className="flex-1 overflow-auto">
               {renderWidget(widgets[index], index)}
