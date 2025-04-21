@@ -12,6 +12,8 @@ export const StockProvider = ({ children }) => {
       [widgetId]: colorId,
     }));
   };
+   
+  console.log('Widget Colors:', widgetColors);
 
   const updateSelectedStock = (stock, widgetId) => {
     const widgetColor = widgetColors[widgetId];
