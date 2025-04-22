@@ -10,7 +10,7 @@ const colors = [
 ];
 
 const ColorSelector = ({ widgetId }) => {
-  const [selectedColor, setSelectedColor] = useState(colors[0].hex);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [open, setOpen] = useState(false);
 
   const { updateWidgetColor } = useStock();

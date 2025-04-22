@@ -6,15 +6,27 @@ export const StockProvider = ({ children }) => {
   const [widgetStocks, setWidgetStocks] = useState({}); // Track selected stock for each widget
   const [widgetColors, setWidgetColors] = useState({}); // Track widget colors by widget ID
 
+  // function to update widget color
   const updateWidgetColor = (widgetId, colorId) => {
     setWidgetColors((prevColors) => ({
       ...prevColors,
       [widgetId]: colorId,
     }));
   };
-   
+
+
+  // function to remove widget color of the removed widget
+  const removeWidgetColor = (widgetId) => {
+    setWidgetColors((prevColors) => {
+      const updatedColors = { ...prevColors };
+      delete updatedColors[widgetId]; 
+      return updatedColors;
+    });
+  };
+
   console.log('Widget Colors:', widgetColors);
 
+  //#region state updt logic 
   const updateSelectedStock = (stock, widgetId) => {
     const widgetColor = widgetColors[widgetId];
     console.log(`Widget ID: ${widgetId}, Color ID: ${widgetColor}`);
@@ -25,9 +37,9 @@ export const StockProvider = ({ children }) => {
       (id) => widgetColors[id] === widgetColor
     );
 
+    //update the states for all the matching color widgets
     if (matchingWidgets.length > 1) {
       console.log(`Matching Widgets Found: ${matchingWidgets}`);
-      // Update the selected stock only for the matching widgets
       setWidgetStocks((prevStocks) => {
         const updatedStocks = { ...prevStocks };
         matchingWidgets.forEach((id) => {
@@ -47,6 +59,7 @@ export const StockProvider = ({ children }) => {
         widgetColors,
         updateWidgetColor,
         updateSelectedStock,
+        removeWidgetColor,
       }}
     >
       {children}

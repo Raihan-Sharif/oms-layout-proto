@@ -19,6 +19,9 @@ const widgetComponents = {
 };
 
 const Workspace = ({ layout, onReset }) => {
+
+  const { removeWidgetColor } = useStock();
+
   const [widgets, setWidgets] = useState(
     Array(layout.spans ? layout.spans.length : layout.rows * layout.cols).fill(
       null
@@ -32,15 +35,14 @@ const Workspace = ({ layout, onReset }) => {
     y: 0,
     cellIndex: null,
   });
-  const [colorId] = useState(null);
   const contextMenuRef = useRef(null);
 
 
-  // Save layout to cookies
+  //#region layout save
   const saveLayout = () => {
     const layoutData = {
       layout,
-      widgets
+      widgets // to save the opened widgets in the layout
     };
     setCookie('savedLayout', layoutData);
     alert('Layout saved!');
@@ -61,7 +63,7 @@ const Workspace = ({ layout, onReset }) => {
 
 
 
-  // Context menu logic
+  //#region ctx menu logic
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -88,7 +90,7 @@ const Workspace = ({ layout, onReset }) => {
     });
   };
 
-  // Widget management
+  //#region widget mangmnt
   const addWidget = (type) => {
     const newWidgets = [...widgets];
     newWidgets[contextMenu.cellIndex] = {
@@ -101,11 +103,16 @@ const Workspace = ({ layout, onReset }) => {
 
   const removeWidget = (index) => {
     const newWidgets = [...widgets];
+    const widgetId = newWidgets[index]?.id; //get widgetId of the widget being removed
     newWidgets[index] = null;
     setWidgets(newWidgets);
+  
+    if (widgetId) {
+      removeWidgetColor(widgetId); // remove particular widget's color from context
+    }
   };
 
-  // Drag and drop logic
+  //region DND logic
   const handleDragStart = (index) => {
     if (widgets[index]) {
       setDraggedWidget({ ...widgets[index], sourceIndex: index });
@@ -134,7 +141,7 @@ const Workspace = ({ layout, onReset }) => {
     setDragOverIndex(null);
   };
 
-  // Render functions
+  //#region wdgt renderer
   const renderWidget = (widget, index) => {
     const Component = widgetComponents[widget.type].component;
     return (
@@ -148,22 +155,8 @@ const Workspace = ({ layout, onReset }) => {
     );
   };
 
+  //#region mtx grd renderer
   const renderGridCell = (index, span = null) => {
-    const { updateWidgetColor } = useStock();
-  
-    const handleColorSelect = (colorId) => {
-      const newWidgets = [...widgets];
-      if (newWidgets[index]) {
-        newWidgets[index] = {
-          ...newWidgets[index],
-          colorId, // Assign the selected color's id to the widget
-        };
-        setWidgets(newWidgets);
-        updateWidgetColor(newWidgets[index].id, colorId); // Update color in StockContext
-        console.log(`Widget at index ${index} assigned color ID: ${colorId}`);
-      }
-    };
-  
     return (
       <div
         key={index}
@@ -216,6 +209,7 @@ const Workspace = ({ layout, onReset }) => {
     );
   };
 
+  //#region spn grd renderer
   const renderGrid = () => {
     if (layout.spans) {
       return (
@@ -246,6 +240,7 @@ const Workspace = ({ layout, onReset }) => {
     }
   };
 
+  //#region workspace
   return (
     <div className="w-full h-screen flex flex-col bg-gray-900">
       {/* Fixed height header */}
