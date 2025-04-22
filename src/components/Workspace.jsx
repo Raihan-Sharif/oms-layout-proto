@@ -130,15 +130,27 @@ const Workspace = ({ layout, onReset }) => {
   const handleDrop = (index) => {
     if (draggedWidget && draggedWidget.sourceIndex !== index) {
       const newWidgets = [...widgets];
-      newWidgets[draggedWidget.sourceIndex] = null;
-      if (newWidgets[index]) {
-        newWidgets[draggedWidget.sourceIndex] = newWidgets[index];
-      }
-      newWidgets[index] = {
-        id: draggedWidget.id,
-        type: draggedWidget.type,
-      };
+  
+      // Swap widgets
+      const sourceWidget = newWidgets[draggedWidget.sourceIndex];
+      const targetWidget = newWidgets[index];
+  
+      newWidgets[draggedWidget.sourceIndex] = targetWidget;
+      newWidgets[index] = sourceWidget;
+  
       setWidgets(newWidgets);
+  
+      // Swap colors in StockContext
+      if (sourceWidget && targetWidget) {
+        const sourceWidgetId = sourceWidget.id;
+        const targetWidgetId = targetWidget.id;
+  
+        const sourceColor = widgetColors[sourceWidgetId];
+        const targetColor = widgetColors[targetWidgetId];
+  
+        updateWidgetColor(sourceWidgetId, targetColor);
+        updateWidgetColor(targetWidgetId, sourceColor);
+      }
     }
     setDraggedWidget(null);
     setDragOverIndex(null);

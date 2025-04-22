@@ -10,13 +10,15 @@ const colors = [
 ];
 
 const ColorSelector = ({ widgetId }) => {
-  const [selectedColor, setSelectedColor] = useState(null);
   const [open, setOpen] = useState(false);
 
-  const { updateWidgetColor } = useStock();
+  const { widgetColors, updateWidgetColor } = useStock();
+
+  // Get the current color for this widget from the StockContext
+  const currentColorId = widgetColors[widgetId];
+  const currentColor = colors.find((color) => color.id === currentColorId);
 
   const handleSelect = (color) => {
-    setSelectedColor(color.hex);
     setOpen(false);
     updateWidgetColor(widgetId, color.id); // Update the widget's color in the context
   };
@@ -27,8 +29,10 @@ const ColorSelector = ({ widgetId }) => {
       <div
         onClick={() => setOpen(!open)}
         className="w-5 h-5 rounded-full cursor-pointer border-2 border-gray-400 shadow-md"
-        style={{ backgroundColor: selectedColor }}
-      ></div>
+        style={{ backgroundColor: currentColor?.hex || "transparent" }}
+      >
+        {!currentColor && <span className="text-xs text-gray-500">?</span>}
+      </div>
 
       {/* Dropdown Menu */}
       {open && (
