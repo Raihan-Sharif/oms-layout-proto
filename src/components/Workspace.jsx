@@ -82,6 +82,9 @@ const Workspace = ({ layout, onReset }) => {
 
   const showContextMenu = (event, index) => {
     event.preventDefault();
+
+    if(widgets[index]) return;
+    
     setContextMenu({
       show: true,
       x: event.clientX,
