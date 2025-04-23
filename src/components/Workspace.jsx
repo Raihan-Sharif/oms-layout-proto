@@ -141,16 +141,16 @@ const Workspace = ({ layout, onReset }) => {
       setWidgets(newWidgets);
   
       // Swap colors in StockContext
-      if (sourceWidget && targetWidget) {
-        const sourceWidgetId = sourceWidget.id;
-        const targetWidgetId = targetWidget.id;
+      // if (sourceWidget && targetWidget) {
+      //   const sourceWidgetId = sourceWidget.id;
+      //   const targetWidgetId = targetWidget.id;
   
-        const sourceColor = widgetColors[sourceWidgetId];
-        const targetColor = widgetColors[targetWidgetId];
+      //   const sourceColor = widgetColors[sourceWidgetId];
+      //   const targetColor = widgetColors[targetWidgetId];
   
-        updateWidgetColor(sourceWidgetId, targetColor);
-        updateWidgetColor(targetWidgetId, sourceColor);
-      }
+      //   updateWidgetColor(sourceWidgetId, targetColor);
+      //   updateWidgetColor(targetWidgetId, sourceColor);
+      // }
     }
     setDraggedWidget(null);
     setDragOverIndex(null);
