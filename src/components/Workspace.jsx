@@ -10,6 +10,8 @@ import { setCookie, getCookie } from "../utils/cookieUtils";
 import { FaSave } from "react-icons/fa";
 import ColorSelector from "./ColorSelector";
 import { useStock } from "../contexts/StockContext";
+import { MdOutlineOpenInNew } from "react-icons/md";
+import WidgetBox from "./WidgetBox";
 
 const widgetComponents = {
   chart: { component: ChartWidget, name: "Chart" },
@@ -170,6 +172,27 @@ const Workspace = ({ layout, onReset }) => {
     );
   };
 
+
+  //#region new tab logic
+  const openInNewTab = (widget) => {
+    const url = `/widget?type=${widget.type}&id=${widget.id}`;
+    const width = 800; // Set the width of the new window
+    const height = 600; // Set the height of the new window
+    const left = window.screenX + (window.outerWidth - width) / 2; // Center horizontally
+    const top = window.screenY + (window.outerHeight - height) / 2; // Center vertically
+  
+    const newWindow = window.open(
+      url,
+      "_blank",
+      `width=${width},height=${height},top=${top},left=${left},resizable,scrollbars`
+    );
+  
+    if (!newWindow) {
+      alert("Popup blocked! Please allow popups for this website.");
+    }
+  };
+  
+
   //#region mtx grd renderer
   const renderGridCell = (index, span = null) => {
     return (
@@ -177,8 +200,8 @@ const Workspace = ({ layout, onReset }) => {
         key={index}
         className={`bg-gray-800 rounded-lg border ${
           dragOverIndex === index
-            ? 'border-yellow-500 bg-gray-700'
-            : 'border-gray-700'
+            ? "border-yellow-500 bg-gray-700"
+            : "border-gray-700"
         } relative overflow-hidden`}
         style={
           span
@@ -193,25 +216,13 @@ const Workspace = ({ layout, onReset }) => {
         onDrop={() => handleDrop(index)}
       >
         {widgets[index] ? (
-          <div className="h-full flex flex-col">
-            <div className="flex justify-between border-b border-gray-700 p-2">
-              <span className="text-xs text-gray-400">
-                {widgetComponents[widgets[index].type].name}
-              </span>
-              <div className="flex items-center space-x-2 gap-5">
-                <ColorSelector widgetId={widgets[index].id} /> {/* Pass widgetId */}
-                <button
-                  onClick={() => removeWidget(index)}
-                  className="text-xs bg-red-700 hover:bg-red-500 px-2 py-1 rounded"
-                >
-                  X
-                </button>
-              </div>
-            </div>
-            <div className="flex-1 overflow-auto">
-              {renderWidget(widgets[index], index)}
-            </div>
-          </div>
+          <WidgetBox
+            widget={widgets[index]}
+            index={index}
+            openInNewTab={openInNewTab}
+            removeWidget={removeWidget}
+            renderWidget={renderWidget}
+          />
         ) : (
           <button
             onClick={(e) => showContextMenu(e, index)}
