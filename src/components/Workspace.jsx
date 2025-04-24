@@ -176,8 +176,8 @@ const Workspace = ({ layout, onReset }) => {
   //#region new tab logic
   const openInNewTab = (widget) => {
     const url = `/widget?type=${widget.type}&id=${widget.id}`;
-    const width = 800; // Set the width of the new window
-    const height = 600; // Set the height of the new window
+    const width = 500; // Set the width of the new window
+    const height = 500; // Set the height of the new window
     const left = window.screenX + (window.outerWidth - width) / 2; // Center horizontally
     const top = window.screenY + (window.outerHeight - height) / 2; // Center vertically
   
