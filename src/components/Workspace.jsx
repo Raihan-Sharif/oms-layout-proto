@@ -41,13 +41,36 @@ const Workspace = ({ layout, onReset }) => {
 
 
   //#region layout save
-  const saveLayout = () => {
+  const saveLayout = async () => {
     const layoutData = {
       layout,
-      widgets // to save the opened widgets in the layout
+      widgets, // Save the opened widgets in the layout
     };
-    setCookie('savedLayout', layoutData);
-    alert('Layout saved!');
+  
+    console.log("Saving layout data:", layoutData); // Log the data being sent
+  
+    // Save to cookies
+    setCookie("savedLayout", layoutData);
+  
+    // Save to MongoDB
+    try {
+      const response = await fetch("http://localhost:5000/api/save-layout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(layoutData),
+      });
+  
+      if (response.ok) {
+        alert("Layout saved successfully!");
+      } else {
+        alert("Failed to save layout to the database.");
+      }
+    } catch (error) {
+      console.error("Error saving layout:", error);
+      alert("An error occurred while saving the layout.");
+    }
   };
 
   // Load layout from cookies on component mount
