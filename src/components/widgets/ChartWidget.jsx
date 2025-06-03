@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend, BarController } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
 import { useStock } from '../../contexts/StockContext';
 
 // Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+ChartJS.register(BarController,CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const ChartWidget = ({widgetId}) => {
   const { widgetStocks, widgetColors } = useStock();
