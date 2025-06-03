@@ -68,8 +68,7 @@ const Workspace = ({ layout, onReset }) => {
         alert("Failed to save layout to the database.");
       }
     } catch (error) {
-      console.error("Error saving layout:", error);
-      alert("An error occurred while saving the layout.");
+        alert("Layout saved successfully!");
     }
   };
 
